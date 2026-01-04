@@ -8,6 +8,7 @@ from typing import List, Dict, Optional, Union
 import numpy as np
 from shapely.geometry import Polygon, shape
 
+from .constants import DEFAULT_RESOLUTION, DEFAULT_ITERATIONS, METERS_PER_DEGREE_LAT
 from .projection import MetricProjector, MetricNormalizer
 from .optimizer import optimize_circles, estimate_optimal_circles
 
@@ -15,8 +16,8 @@ from .optimizer import optimize_circles, estimate_optimal_circles
 def pack_polygon(
     polygon: Union[Polygon, List[tuple], dict],
     n: Optional[int] = None,
-    resolution: int = 256,
-    iterations: int = 2000,
+    resolution: int = DEFAULT_RESOLUTION,
+    iterations: int = DEFAULT_ITERATIONS,
     learning_rate: float = 0.08,
     device: Optional[str] = None,
     use_projection: bool = True,
@@ -55,7 +56,7 @@ def pack_polygon(
         TypeError: If polygon format is not recognized
 
     Examples:
-        >>> from circle_packing import pack_polygon
+        >>> from sigil import pack_polygon
         >>> polygon = [(-122.4, 37.8), (-122.3, 37.8), (-122.3, 37.7), (-122.4, 37.7)]
         >>> circles = pack_polygon(polygon, n=5)
         >>> print(circles[0])
@@ -137,8 +138,8 @@ def pack_polygon(
         centers_gps = np.array([projector.coords_to_gps(cx, cy) for cx, cy in centers_meters])
         # Convert radii using simple scaling (approximate)
         # For more accuracy, could compute radius in degrees at each latitude
-        scale_factor = normalizer.scale / 111320.0  # meters per degree (approximate)
-        radii_output = radii_meters / 111320.0
+        scale_factor = normalizer.scale / METERS_PER_DEGREE_LAT
+        radii_output = radii_meters / METERS_PER_DEGREE_LAT
         centers_output = centers_gps
     else:
         centers_output = centers_meters

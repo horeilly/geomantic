@@ -52,7 +52,9 @@ dmypy.json
 *.png
 *.jpg
 *.pdf
-sf_zipcodes.geojson
+
+# Claude Code plan files
+.claude/
 
 # MacOS
 .DS_Store

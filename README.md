@@ -1,7 +1,81 @@
 # Sigil
 
+[![Tests](https://github.com/horeilly/sigil/workflows/Tests/badge.svg)](https://github.com/horeilly/sigil/actions)
+[![Coverage](https://codecov.io/gh/horeilly/sigil/branch/main/graph/badge.svg)](https://codecov.io/gh/horeilly/sigil)
+[![PyPI](https://img.shields.io/pypi/v/sigil.svg)](https://pypi.org/project/sigil/)
+[![Python](https://img.shields.io/pypi/pyversions/sigil.svg)](https://pypi.org/project/sigil/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ## TL;DR
 A Python package to approximate an irregular polygon as a set of circles, with optional auto-detection of optimal circle count. Accepts standard polygon input, produces both raw circle data and a visualization, and is engineered with DevOps hygiene suitable for portfolio/demo use.
+
+## Installation
+
+```bash
+pip install sigil
+```
+
+## Quick Start
+
+```python
+from sigil import pack_polygon, visualize_packing
+
+# Define a polygon (list of coordinate tuples)
+polygon = [(0, 0), (2, 0), (2, 1), (0, 1)]
+
+# Pack circles into the polygon (auto-detect optimal count)
+circles = pack_polygon(polygon)
+
+# Visualize the result
+visualize_packing(polygon, circles)
+```
+
+**For geographic data (lat/lon coordinates):**
+
+```python
+# Use projection for geographic coordinates
+circles = pack_polygon(
+    polygon,
+    n=5,  # Or None for auto-detection
+    use_projection=True  # Ensures circles stay circular on Earth's surface
+)
+```
+
+## Architecture
+
+Sigil uses a modular architecture with four main components:
+
+```
+sigil/
+├── core.py          # Main API: pack_polygon() orchestrates the pipeline
+├── optimizer.py     # PyTorch-based optimization engine
+├── projection.py    # Geographic coordinate transformations (WGS84 ↔ UTM)
+└── visualization.py # Plotting and output utilities
+```
+
+**Key modules:**
+
+- **`core.py`**: Main entry point with `pack_polygon()` function. Handles input parsing, projection setup, normalization, and result formatting.
+
+- **`optimizer.py`**: Contains the differentiable rendering optimization:
+  - `CircleModel`: PyTorch neural network with learnable circle positions and radii
+  - `DifferentiableRenderer`: Rasterizes polygons to binary masks
+  - `optimize_circles()`: Gradient descent optimization with IoU loss
+  - Smart initialization samples circle positions inside the polygon
+  - Containment and repulsion penalties prevent circles from escaping or collapsing
+
+- **`projection.py`**: Coordinate transformation utilities:
+  - `MetricProjector`: WGS84 ↔ UTM transformations with auto-zone detection
+  - `MetricNormalizer`: Scales coordinates to [0,1] normalized space for optimization
+
+- **`visualization.py`**: Visualization tools including `visualize_packing()` and `print_circle_summary()`
+
+**Optimization pipeline:**
+```
+Input Polygon → [Projection to UTM] → Normalization →
+PyTorch Optimization (IoU + Containment + Repulsion) →
+Denormalization → [Projection back to WGS84] → Circle Results
+```
 
 ## Goals
 

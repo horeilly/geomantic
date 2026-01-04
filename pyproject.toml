@@ -8,14 +8,16 @@ version = "0.1.0"
 description = "Approximate irregular polygons as sets of circles using differentiable rendering"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [
-    {name = "Harry"}
+    {name = "Harry O'Reilly", email = "harry@example.com"}
 ]
+keywords = ["geometry", "optimization", "circles", "polygon", "packing", "pytorch"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -23,7 +25,38 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
 ]
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.20.0",
+    "shapely>=2.0.0",
+    "pyproj>=3.0.0",
+    "matplotlib>=3.5.0",
+    "requests>=2.25.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/horeilly/sigil"
+Repository = "https://github.com/horeilly/sigil"
+Issues = "https://github.com/horeilly/sigil/issues"
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.10.0",
+    "flake8>=7.1.1",
+    "mypy>=1.14.0",
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+    "pytest-mock>=3.12.0",
+]
+
+[project.scripts]
+sigil-demo = "sigil.demo:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sigil*"]
 
 [tool.black]
 line-length = 100

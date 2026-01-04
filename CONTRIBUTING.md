@@ -6,8 +6,8 @@ Thank you for your interest in contributing to the Sigil project!
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/circle-packing.git
-cd circle-packing
+git clone https://github.com/yourusername/sigil.git
+cd sigil
 ```
 
 2. Create a virtual environment:
@@ -34,12 +34,12 @@ This project uses **Black** for code formatting with a line length of 100 charac
 
 Always format your code with Black:
 ```bash
-black sigil/ main.py test_basic.py examples/
+black sigil/ tests/ examples/
 ```
 
 Check that your code is formatted correctly:
 ```bash
-black --check sigil/ main.py test_basic.py examples/
+black --check sigil/ tests/ examples/
 ```
 
 ### Additional Quality Checks
@@ -51,12 +51,12 @@ mypy sigil/
 
 **Linting with flake8:**
 ```bash
-flake8 sigil/ main.py test_basic.py examples/
+flake8 sigil/ tests/ examples/
 ```
 
 **Run tests:**
 ```bash
-pytest
+pytest tests/ -v --cov=sigil
 ```
 
 ## Code Standards

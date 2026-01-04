@@ -13,6 +13,8 @@ import torch.optim as optim
 from matplotlib.path import Path
 from shapely.geometry import Polygon
 
+from .constants import EPSILON, ELBOW_THRESHOLD_RATIO
+
 
 class DifferentiableRenderer:
     """
@@ -70,19 +72,62 @@ class CircleModel(nn.Module):
         log_radii: Learnable tensor of shape (n_circles,) for log(radius)
     """
 
-    def __init__(self, n_circles: int, init_scale: float = 0.2):
+    def __init__(self, n_circles: int, init_scale: float = 0.2, target_polygon: Polygon = None):
         """
         Initialize circle parameters with random values.
 
         Args:
             n_circles: Number of circles to optimize
             init_scale: Scale of initialization (centers in [0.4±init_scale])
+            target_polygon: Optional polygon to sample initial positions from interior
         """
         super().__init__()
-        # Initialize centers near the middle of [0, 1] space
-        self.centers = nn.Parameter(torch.rand(n_circles, 2) * init_scale + (0.5 - init_scale / 2))
+        # Initialize centers inside the polygon if provided
+        if target_polygon is not None:
+            centers_init = self._sample_points_inside_polygon(target_polygon, n_circles)
+        else:
+            # Fallback: Initialize centers near the middle of [0, 1] space
+            centers_init = torch.rand(n_circles, 2) * init_scale + (0.5 - init_scale / 2)
+
+        self.centers = nn.Parameter(centers_init)
         # Initialize radii to small values (log space)
         self.log_radii = nn.Parameter(torch.ones(n_circles) * -3.0)
+
+    def _sample_points_inside_polygon(self, polygon: Polygon, n_points: int) -> torch.Tensor:
+        """
+        Sample random points from inside a polygon using rejection sampling.
+
+        Args:
+            polygon: Shapely polygon in [0, 1] normalized coordinates
+            n_points: Number of points to sample
+
+        Returns:
+            Tensor of shape (n_points, 2) with points inside the polygon
+        """
+        from shapely.geometry import Point
+
+        min_x, min_y, max_x, max_y = polygon.bounds
+        points = []
+
+        # Rejection sampling: generate random points until we have enough inside
+        max_attempts = n_points * 1000  # Prevent infinite loop
+        attempts = 0
+
+        while len(points) < n_points and attempts < max_attempts:
+            x = np.random.uniform(min_x, max_x)
+            y = np.random.uniform(min_y, max_y)
+            if polygon.contains(Point(x, y)):
+                points.append([x, y])
+            attempts += 1
+
+        # If we couldn't sample enough points (very thin polygon), fill with centroid
+        while len(points) < n_points:
+            cx, cy = polygon.centroid.x, polygon.centroid.y
+            # Add small jitter
+            points.append([cx + np.random.uniform(-0.05, 0.05),
+                          cy + np.random.uniform(-0.05, 0.05)])
+
+        return torch.tensor(points, dtype=torch.float32)
 
     def forward(self, grid: torch.Tensor, sharpness: float) -> torch.Tensor:
         """
@@ -158,8 +203,8 @@ def optimize_circles(
     if target_mask.sum() == 0:
         raise ValueError("Target polygon produced empty mask. Check polygon coordinates.")
 
-    # Initialize model and optimizer
-    model = CircleModel(n_circles).to(device)
+    # Initialize model with polygon-aware initialization
+    model = CircleModel(n_circles, target_polygon=target_polygon).to(device)
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     # Sharpness annealing schedule
@@ -175,13 +220,42 @@ def optimize_circles(
         # IoU loss: 1 - (intersection / union)
         intersection = (generated_mask * target_mask).sum()
         union = generated_mask.sum() + target_mask.sum() - intersection
-        loss = 1.0 - (intersection / (union + 1e-6))
+        iou_loss = 1.0 - (intersection / (union + 1e-6))
+
+        # Containment penalty: penalize circles whose centers are outside polygon
+        containment_penalty = 0.0
+        from shapely.geometry import Point
+        for center in model.centers:
+            cx, cy = center[0].item(), center[1].item()
+            if not target_polygon.contains(Point(cx, cy)):
+                # Distance to nearest edge (approximated by distance to centroid)
+                poly_cx, poly_cy = target_polygon.centroid.x, target_polygon.centroid.y
+                dist = torch.sqrt((center[0] - poly_cx)**2 + (center[1] - poly_cy)**2)
+                containment_penalty += dist * 0.1  # Weight the penalty
+
+        # Repulsion penalty: discourage circles from overlapping too much
+        # This prevents all circles from collapsing to the same position
+        repulsion_penalty = 0.0
+        if n_circles > 1:
+            for i in range(n_circles):
+                for j in range(i + 1, n_circles):
+                    dist = torch.norm(model.centers[i] - model.centers[j])
+                    # Penalize circles that are too close (exponential repulsion)
+                    min_dist = 0.05  # Minimum desired separation
+                    if dist < min_dist:
+                        repulsion_penalty += (min_dist - dist) ** 2
+
+        # Combined loss with penalties
+        loss = iou_loss + containment_penalty + repulsion_penalty * 0.5
 
         loss.backward()
         optimizer.step()
 
         if verbose and i % 200 == 0:
-            print(f"Iteration {i:04d} | Loss: {loss.item():.4f}")
+            iou_str = f"{iou_loss.item():.4f}"
+            cont_str = f"{containment_penalty:.4f}" if isinstance(containment_penalty, torch.Tensor) else f"{containment_penalty:.4f}"
+            rep_str = f"{repulsion_penalty.item():.4f}" if isinstance(repulsion_penalty, torch.Tensor) else f"{repulsion_penalty:.4f}"
+            print(f"Iteration {i:04d} | IoU: {iou_str} | Contain: {cont_str} | Repulsion: {rep_str} | Total: {loss.item():.4f}")
 
     # Extract optimized parameters
     centers = model.centers.detach().cpu().numpy()
@@ -224,7 +298,7 @@ def estimate_optimal_circles(
     losses = []
 
     for n in range(min_circles, max_circles + 1):
-        _, _ = optimize_circles(
+        centers, radii = optimize_circles(
             target_polygon,
             n_circles=n,
             resolution=resolution,
@@ -233,18 +307,18 @@ def estimate_optimal_circles(
             verbose=False,
         )
 
-        # Evaluate final loss
+        # Evaluate final loss using optimized circles
         model = CircleModel(n).to(device)
-        optimizer = optim.Adam(model.parameters(), lr=0.08)
+        # Set optimized parameters
+        model.centers.data = torch.tensor(centers, device=device, dtype=torch.float32)
+        model.log_radii.data = torch.log(torch.tensor(radii, device=device, dtype=torch.float32))
 
-        for _ in range(iterations):
-            optimizer.zero_grad()
+        # Compute final loss with high sharpness
+        with torch.no_grad():
             gen_mask = model(renderer.grid, sharpness=100.0)
             intersection = (gen_mask * target_mask).sum()
             union = gen_mask.sum() + target_mask.sum() - intersection
-            loss = 1.0 - (intersection / (union + 1e-6))
-            loss.backward()
-            optimizer.step()
+            loss = 1.0 - (intersection / (union + EPSILON))
 
         losses.append(loss.item())
 
@@ -256,7 +330,7 @@ def estimate_optimal_circles(
     # Calculate rate of improvement
     improvements = -np.diff(losses)
     # Find where improvement drops below threshold (elbow point)
-    threshold = np.mean(improvements) * 0.3
+    threshold = np.mean(improvements) * ELBOW_THRESHOLD_RATIO
     elbow_idx = np.where(improvements < threshold)[0]
 
     if len(elbow_idx) > 0:
