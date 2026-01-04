@@ -180,7 +180,7 @@ class TestMetricNormalizer:
 
         # Aspect ratio should be preserved
         original_aspect = 400.0 / 100.0
-        normalized_aspect = x_range / y_range if y_range > 0 else float('inf')
+        normalized_aspect = x_range / y_range if y_range > 0 else float("inf")
         assert abs(normalized_aspect - original_aspect) < 0.1
 
 
@@ -225,8 +225,7 @@ class TestIntegratedProjectionWorkflow:
     def test_circle_radius_conversion(self):
         """Test converting circle radius through projection."""
         # Small square in SF
-        poly_gps = Polygon([(-122.44, 37.80), (-122.43, 37.80),
-                           (-122.43, 37.81), (-122.44, 37.81)])
+        poly_gps = Polygon([(-122.44, 37.80), (-122.43, 37.80), (-122.43, 37.81), (-122.44, 37.81)])
 
         projector = MetricProjector(polygon=poly_gps)
         poly_meters = projector.poly_to_meters(poly_gps)
@@ -250,12 +249,14 @@ class TestEdgeCases:
     def test_very_small_polygon(self):
         """Should handle very small geographic areas."""
         # 10m x 10m square in SF (approximately)
-        poly_gps = Polygon([
-            (-122.4000, 37.8000),
-            (-122.3999, 37.8000),
-            (-122.3999, 37.8001),
-            (-122.4000, 37.8001),
-        ])
+        poly_gps = Polygon(
+            [
+                (-122.4000, 37.8000),
+                (-122.3999, 37.8000),
+                (-122.3999, 37.8001),
+                (-122.4000, 37.8001),
+            ]
+        )
 
         projector = MetricProjector(polygon=poly_gps)
         poly_meters = projector.poly_to_meters(poly_gps)
@@ -270,12 +271,14 @@ class TestEdgeCases:
     def test_elongated_polygon(self):
         """Should handle very elongated shapes."""
         # Very wide, thin polygon
-        poly_gps = Polygon([
-            (-122.5, 37.8),
-            (-122.3, 37.8),
-            (-122.3, 37.801),
-            (-122.5, 37.801),
-        ])
+        poly_gps = Polygon(
+            [
+                (-122.5, 37.8),
+                (-122.3, 37.8),
+                (-122.3, 37.801),
+                (-122.5, 37.801),
+            ]
+        )
 
         projector = MetricProjector(polygon=poly_gps)
         poly_meters = projector.poly_to_meters(poly_gps)

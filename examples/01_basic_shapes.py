@@ -25,7 +25,7 @@ def main():
         rectangle,
         circles,
         title="Circle Packing: Rectangle (3x1) with 8 circles",
-        save_path="examples/output/rectangle_8_circles.png"
+        save_path="examples/output/rectangle_8_circles.png",
     )
     print("Saved: examples/output/rectangle_8_circles.png")
 
@@ -40,7 +40,7 @@ def main():
         square,
         circles,
         title=f"Circle Packing: Unit Square (auto: {len(circles)} circles)",
-        save_path="examples/output/square_auto.png"
+        save_path="examples/output/square_auto.png",
     )
     print("Saved: examples/output/square_auto.png")
 
@@ -54,7 +54,7 @@ def main():
         triangle,
         circles,
         title="Circle Packing: Equilateral Triangle with 3 circles",
-        save_path="examples/output/triangle_3_circles.png"
+        save_path="examples/output/triangle_3_circles.png",
     )
     print("Saved: examples/output/triangle_3_circles.png")
 
@@ -71,7 +71,7 @@ def main():
         pentagon,
         circles,
         title="Circle Packing: Regular Pentagon with 5 circles",
-        save_path="examples/output/pentagon_5_circles.png"
+        save_path="examples/output/pentagon_5_circles.png",
     )
     print("Saved: examples/output/pentagon_5_circles.png")
 
@@ -88,7 +88,7 @@ def main():
         hexagon,
         circles,
         title="Circle Packing: Regular Hexagon with 7 circles",
-        save_path="examples/output/hexagon_7_circles.png"
+        save_path="examples/output/hexagon_7_circles.png",
     )
     print("Saved: examples/output/hexagon_7_circles.png")
 

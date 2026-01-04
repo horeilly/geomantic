@@ -22,9 +22,7 @@ def create_test_polygons():
     # Medium complexity
     n_vertices = 20
     angles = np.linspace(0, 2 * np.pi, n_vertices + 1)[:-1]
-    polygons["circle_approx_20"] = [
-        (np.cos(a), np.sin(a)) for a in angles
-    ]
+    polygons["circle_approx_20"] = [(np.cos(a), np.sin(a)) for a in angles]
     polygons["circle_approx_20"].append(polygons["circle_approx_20"][0])
 
     # Complex shape (star)
@@ -43,8 +41,7 @@ def create_test_polygons():
     # Add some irregularity
     radii = 1.0 + 0.1 * np.random.randn(n_vertices)
     polygons["complex_irregular_50"] = [
-        (r * np.cos(a), r * np.sin(a))
-        for r, a in zip(radii, angles)
+        (r * np.cos(a), r * np.sin(a)) for r, a in zip(radii, angles)
     ]
     polygons["complex_irregular_50"].append(polygons["complex_irregular_50"][0])
 
@@ -60,7 +57,7 @@ def benchmark_single_run(polygon, n_circles, iterations, resolution):
         iterations=iterations,
         resolution=resolution,
         use_projection=False,
-        verbose=False
+        verbose=False,
     )
     duration = time.time() - start
     return duration, circles
@@ -75,7 +72,7 @@ def benchmark_auto_detection(polygon, resolution):
         iterations=100,  # Fewer iterations for speed
         resolution=resolution,
         use_projection=False,
-        verbose=False
+        verbose=False,
     )
     duration = time.time() - start
     return duration, len(circles)
@@ -108,7 +105,9 @@ def main():
 
     test_polygon = polygons["rectangle_2x1"]
     for n in [3, 5, 8, 10, 15]:
-        duration, _ = benchmark_single_run(test_polygon, n_circles=n, iterations=500, resolution=128)
+        duration, _ = benchmark_single_run(
+            test_polygon, n_circles=n, iterations=500, resolution=128
+        )
         per_circle = duration / n
         print(f"{n:<15} {duration:>10.3f}   {per_circle:>13.4f}")
 
@@ -121,7 +120,9 @@ def main():
     test_polygon = polygons["rectangle_2x1"]
     baseline = None
     for res in [64, 128, 256, 512]:
-        duration, _ = benchmark_single_run(test_polygon, n_circles=5, iterations=500, resolution=res)
+        duration, _ = benchmark_single_run(
+            test_polygon, n_circles=5, iterations=500, resolution=res
+        )
         if baseline is None:
             baseline = duration
             speedup_str = "baseline"
@@ -138,7 +139,9 @@ def main():
 
     test_polygon = polygons["rectangle_2x1"]
     for iters in [100, 500, 1000, 2000]:
-        duration, _ = benchmark_single_run(test_polygon, n_circles=5, iterations=iters, resolution=128)
+        duration, _ = benchmark_single_run(
+            test_polygon, n_circles=5, iterations=iters, resolution=128
+        )
         per_iter = (duration / iters) * 1000  # Convert to ms
         print(f"{iters:<15} {duration:>10.3f}   {per_iter:>13.4f}")
 

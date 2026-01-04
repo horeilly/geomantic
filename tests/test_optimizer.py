@@ -1,6 +1,5 @@
 """Tests for sigil.optimizer module."""
 
-import pytest
 import torch
 import numpy as np
 
@@ -27,7 +26,7 @@ class TestCircleModel:
         # Create a simple grid
         x = torch.linspace(0, 1, 10, device=device)
         y = torch.linspace(0, 1, 10, device=device)
-        grid_x, grid_y = torch.meshgrid(x, y, indexing='ij')
+        grid_x, grid_y = torch.meshgrid(x, y, indexing="ij")
         grid = torch.stack([grid_x, grid_y], dim=-1)
 
         mask = model(grid, sharpness=10.0)
@@ -38,7 +37,7 @@ class TestCircleModel:
         model = CircleModel(n_circles=3).to(device)
         x = torch.linspace(0, 1, 20, device=device)
         y = torch.linspace(0, 1, 20, device=device)
-        grid_x, grid_y = torch.meshgrid(x, y, indexing='ij')
+        grid_x, grid_y = torch.meshgrid(x, y, indexing="ij")
         grid = torch.stack([grid_x, grid_y], dim=-1)
 
         mask = model(grid, sharpness=10.0)
@@ -54,7 +53,7 @@ class TestCircleModel:
 
         x = torch.linspace(0, 1, 50, device=device)
         y = torch.linspace(0, 1, 50, device=device)
-        grid_x, grid_y = torch.meshgrid(x, y, indexing='ij')
+        grid_x, grid_y = torch.meshgrid(x, y, indexing="ij")
         grid = torch.stack([grid_x, grid_y], dim=-1)
 
         mask_soft = model(grid, sharpness=1.0)
@@ -81,6 +80,7 @@ class TestDifferentiableRenderer:
     def test_rasterize_simple_square(self, unit_square, device):
         """Should rasterize a simple square."""
         from shapely.geometry import Polygon
+
         renderer = DifferentiableRenderer(resolution=128, device=device)
         mask = renderer.rasterize_polygon(Polygon(unit_square))
 
@@ -93,6 +93,7 @@ class TestDifferentiableRenderer:
     def test_rasterize_triangle(self, equilateral_triangle, device):
         """Should rasterize a triangle."""
         from shapely.geometry import Polygon
+
         renderer = DifferentiableRenderer(resolution=128, device=device)
         mask = renderer.rasterize_polygon(Polygon(equilateral_triangle))
 
@@ -108,13 +109,14 @@ class TestOptimizeCircles:
     def test_returns_correct_shapes(self, simple_rectangle, device):
         """Should return arrays of correct shapes."""
         from shapely.geometry import Polygon
+
         centers, radii = optimize_circles(
             Polygon(simple_rectangle),
             n_circles=5,
             resolution=64,
             iterations=50,
             device=device,
-            verbose=False
+            verbose=False,
         )
         assert centers.shape == (5, 2)
         assert radii.shape == (5,)
@@ -152,26 +154,28 @@ class TestOptimizeCircles:
     def test_radii_are_positive(self, simple_rectangle, device):
         """All returned radii should be positive."""
         from shapely.geometry import Polygon
+
         _, radii = optimize_circles(
             Polygon(simple_rectangle),
             n_circles=4,
             resolution=64,
             iterations=50,
             device=device,
-            verbose=False
+            verbose=False,
         )
         assert np.all(radii > 0)
 
     def test_centers_within_bounds(self, simple_rectangle, device):
         """Circle centers should be approximately within polygon bounds."""
         from shapely.geometry import Polygon
+
         centers, _ = optimize_circles(
             Polygon(simple_rectangle),
             n_circles=5,
             resolution=64,
             iterations=100,
             device=device,
-            verbose=False
+            verbose=False,
         )
         # Rectangle is (0,0) to (2,1), allow some margin
         assert np.all(centers[:, 0] >= -0.5)
@@ -182,6 +186,7 @@ class TestOptimizeCircles:
     def test_different_iteration_counts(self, unit_square, device):
         """Should work with different iteration counts."""
         from shapely.geometry import Polygon
+
         for iterations in [10, 50, 100]:
             centers, radii = optimize_circles(
                 Polygon(unit_square),
@@ -189,7 +194,7 @@ class TestOptimizeCircles:
                 resolution=64,
                 iterations=iterations,
                 device=device,
-                verbose=False
+                verbose=False,
             )
             assert centers.shape == (3, 2)
             assert radii.shape == (3,)
@@ -201,39 +206,42 @@ class TestEstimateOptimalCircles:
     def test_returns_integer(self, simple_rectangle, device):
         """Should return an integer circle count."""
         from shapely.geometry import Polygon
+
         n_optimal = estimate_optimal_circles(
             Polygon(simple_rectangle),
             min_circles=2,
             max_circles=6,
             resolution=64,
             iterations=50,
-            device=device
+            device=device,
         )
         assert isinstance(n_optimal, (int, np.integer))
 
     def test_within_specified_range(self, simple_rectangle, device):
         """Should return value within min/max range."""
         from shapely.geometry import Polygon
+
         n_optimal = estimate_optimal_circles(
             Polygon(simple_rectangle),
             min_circles=3,
             max_circles=7,
             resolution=64,
             iterations=50,
-            device=device
+            device=device,
         )
         assert 3 <= n_optimal <= 7
 
     def test_reasonable_for_small_polygon(self, unit_square, device):
         """Small polygon should get a reasonable number of circles."""
         from shapely.geometry import Polygon
+
         n_optimal = estimate_optimal_circles(
             Polygon(unit_square),
             min_circles=2,
             max_circles=10,
             resolution=64,
             iterations=50,
-            device=device
+            device=device,
         )
         # Should be within the specified range
         assert 2 <= n_optimal <= 10
@@ -241,13 +249,14 @@ class TestEstimateOptimalCircles:
     def test_reasonable_for_large_polygon(self, simple_rectangle, device):
         """Larger polygon might need more circles."""
         from shapely.geometry import Polygon
+
         n_optimal = estimate_optimal_circles(
             Polygon(simple_rectangle),
             min_circles=2,
             max_circles=10,
             resolution=64,
             iterations=50,
-            device=device
+            device=device,
         )
         assert 2 <= n_optimal <= 10
 
@@ -271,8 +280,9 @@ class TestSharpnessAnnealing:
         # Last value should be close to end (not exact due to division)
         assert np.isclose(sharpness_values[-1], END_SHARPNESS, rtol=0.01)
         # Should be monotonically increasing
-        assert all(sharpness_values[i] <= sharpness_values[i+1]
-                   for i in range(len(sharpness_values)-1))
+        assert all(
+            sharpness_values[i] <= sharpness_values[i + 1] for i in range(len(sharpness_values) - 1)
+        )
 
 
 class TestDeviceHandling:
@@ -281,13 +291,14 @@ class TestDeviceHandling:
     def test_cpu_device(self, simple_rectangle):
         """Should work with CPU device."""
         from shapely.geometry import Polygon
+
         centers, radii = optimize_circles(
             Polygon(simple_rectangle),
             n_circles=3,
             resolution=64,
             iterations=50,
             device="cpu",
-            verbose=False
+            verbose=False,
         )
         assert centers.shape == (3, 2)
         assert radii.shape == (3,)
@@ -295,13 +306,14 @@ class TestDeviceHandling:
     def test_auto_device_selection(self, simple_rectangle):
         """Should auto-select device when device=None."""
         from shapely.geometry import Polygon
+
         centers, radii = optimize_circles(
             Polygon(simple_rectangle),
             n_circles=3,
             resolution=64,
             iterations=50,
             device=None,  # Auto-select
-            verbose=False
+            verbose=False,
         )
         assert centers.shape == (3, 2)
         assert radii.shape == (3,)

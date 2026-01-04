@@ -9,7 +9,7 @@ For the San Francisco ZIP code demo, see examples/sf_zipcodes_demo.py
 from sigil import pack_polygon, visualize_packing, print_circle_summary
 
 
-def main():
+def main() -> None:
     """Run a simple circle packing demo with a basic polygon."""
 
     print("=" * 70)

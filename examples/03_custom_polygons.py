@@ -35,16 +35,8 @@ def create_l_shape():
 
 def create_crescent():
     """Create a crescent moon shape (approximate)."""
-    # Outer circle
-    outer_angles = np.linspace(0, 2 * np.pi, 30)
-    outer_points = [(np.cos(a), np.sin(a)) for a in outer_angles]
-
-    # Inner circle (offset to create crescent)
-    inner_angles = np.linspace(0, 2 * np.pi, 20)
-    inner_points = [(0.5 + 0.7 * np.cos(a), 0.7 * np.sin(a)) for a in inner_angles]
-
-    # Combine (this is simplified; proper crescent needs more complex geometry)
-    # For demonstration, we'll use a simpler shape
+    # Using a simplified irregular shape for demonstration
+    # (Proper crescent would require more complex geometry)
     return [
         (1.0, 0.0),
         (0.9, 0.4),
@@ -80,7 +72,7 @@ def main():
         star,
         circles,
         title="Circle Packing: 5-Point Star",
-        save_path="examples/output/star_5_point.png"
+        save_path="examples/output/star_5_point.png",
     )
     print("Saved: examples/output/star_5_point.png")
 
@@ -94,7 +86,7 @@ def main():
         l_shape,
         circles,
         title="Circle Packing: L-Shape (Concave Polygon)",
-        save_path="examples/output/l_shape.png"
+        save_path="examples/output/l_shape.png",
     )
     print("Saved: examples/output/l_shape.png")
 
@@ -108,7 +100,7 @@ def main():
         star8,
         circles,
         title="Circle Packing: 8-Point Star",
-        save_path="examples/output/star_8_point.png"
+        save_path="examples/output/star_8_point.png",
     )
     print("Saved: examples/output/star_8_point.png")
 
@@ -122,7 +114,7 @@ def main():
         crescent,
         circles,
         title="Circle Packing: Irregular Polygon",
-        save_path="examples/output/irregular.png"
+        save_path="examples/output/irregular.png",
     )
     print("Saved: examples/output/irregular.png")
 
@@ -137,7 +129,7 @@ def main():
         complex_star,
         circles,
         title=f"Circle Packing: 12-Point Star (auto: {len(circles)} circles)",
-        save_path="examples/output/star_12_point_auto.png"
+        save_path="examples/output/star_12_point_auto.png",
     )
     print("Saved: examples/output/star_12_point_auto.png")
 

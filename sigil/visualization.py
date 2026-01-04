@@ -5,10 +5,11 @@ This module provides functions to visualize the circle packing results,
 including both the optimization space and real-world map projections.
 """
 
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Any
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Ellipse
+from matplotlib.axes import Axes
 from shapely.geometry import Polygon, shape
 
 
@@ -87,7 +88,7 @@ def visualize_packing(
 
 
 def _plot_geo_view(
-    ax, polygon: Polygon, circles: List[Dict[str, float]], mode: str, title: Optional[str]
+    ax: Axes, polygon: Polygon, circles: List[Dict[str, float]], mode: str, title: Optional[str]
 ) -> None:
     """Plot the real-world view of polygon and circles."""
     # Plot polygon
@@ -136,7 +137,9 @@ def _plot_geo_view(
     ax.legend(loc="upper right")
 
 
-def _draw_geo_circle(ax, lon: float, lat: float, radius_deg: float, color, idx: int) -> None:
+def _draw_geo_circle(
+    ax: Axes, lon: float, lat: float, radius_deg: float, color: Any, idx: int
+) -> None:
     """
     Draw a circle on a geographic plot using an ellipse.
 
@@ -161,7 +164,7 @@ def _draw_geo_circle(ax, lon: float, lat: float, radius_deg: float, color, idx: 
     ax.add_patch(ellipse)
 
 
-def _plot_normalized_view(ax, polygon: Polygon, circles: List[Dict[str, float]]) -> None:
+def _plot_normalized_view(ax: Axes, polygon: Polygon, circles: List[Dict[str, float]]) -> None:
     """
     Plot a simplified normalized view (for debugging/demonstration).
 

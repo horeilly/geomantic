@@ -1,9 +1,7 @@
 """Tests for sigil.visualization module."""
 
-import pytest
 import os
 import tempfile
-from io import StringIO
 
 from sigil import pack_polygon, visualize_packing, print_circle_summary
 
@@ -67,43 +65,23 @@ class TestVisualizePacking:
     def test_cartesian_mode(self, simple_rectangle):
         """Should work with explicit Cartesian mode."""
         circles = pack_polygon(simple_rectangle, n=3, iterations=50)
-        visualize_packing(
-            simple_rectangle,
-            circles,
-            projection_mode="cartesian",
-            save_path=None
-        )
+        visualize_packing(simple_rectangle, circles, projection_mode="cartesian", save_path=None)
 
     def test_geographic_mode(self, geographic_polygon):
         """Should work with geographic mode."""
         circles = pack_polygon(geographic_polygon, n=3, use_projection=True, iterations=50)
-        visualize_packing(
-            geographic_polygon,
-            circles,
-            projection_mode="geographic",
-            save_path=None
-        )
+        visualize_packing(geographic_polygon, circles, projection_mode="geographic", save_path=None)
 
     def test_auto_mode_detection(self, simple_rectangle):
         """Should auto-detect mode from coordinates."""
         circles = pack_polygon(simple_rectangle, n=3, iterations=50)
         # Auto mode should work (detect as Cartesian for small coordinates)
-        visualize_packing(
-            simple_rectangle,
-            circles,
-            projection_mode="auto",
-            save_path=None
-        )
+        visualize_packing(simple_rectangle, circles, projection_mode="auto", save_path=None)
 
     def test_custom_title(self, simple_rectangle):
         """Should accept custom title."""
         circles = pack_polygon(simple_rectangle, n=3, iterations=50)
-        visualize_packing(
-            simple_rectangle,
-            circles,
-            title="Custom Test Title",
-            save_path=None
-        )
+        visualize_packing(simple_rectangle, circles, title="Custom Test Title", save_path=None)
 
     def test_with_shapely_polygon(self, simple_rectangle):
         """Should work with Shapely Polygon object."""
@@ -197,10 +175,7 @@ class TestGeographicVisualization:
         with tempfile.TemporaryDirectory() as tmpdir:
             save_path = os.path.join(tmpdir, "geo_test.png")
             visualize_packing(
-                geographic_polygon,
-                circles,
-                projection_mode="geographic",
-                save_path=save_path
+                geographic_polygon, circles, projection_mode="geographic", save_path=save_path
             )
             assert os.path.exists(save_path)
 
@@ -208,12 +183,7 @@ class TestGeographicVisualization:
         """Geographic plot should have appropriate axis labels."""
         circles = pack_polygon(geographic_polygon, n=2, use_projection=True, iterations=50)
 
-        visualize_packing(
-            geographic_polygon,
-            circles,
-            projection_mode="geographic",
-            save_path=None
-        )
+        visualize_packing(geographic_polygon, circles, projection_mode="geographic", save_path=None)
         # Function should complete without error
         # (Can't easily check axis labels without showing the plot)
 
@@ -223,33 +193,13 @@ class TestIntegrationWithPackPolygon:
 
     def test_full_workflow_cartesian(self, simple_rectangle):
         """Complete workflow: pack + visualize (Cartesian)."""
-        circles = pack_polygon(
-            simple_rectangle,
-            n=5,
-            use_projection=False,
-            iterations=50
-        )
-        visualize_packing(
-            simple_rectangle,
-            circles,
-            projection_mode="cartesian",
-            save_path=None
-        )
+        circles = pack_polygon(simple_rectangle, n=5, use_projection=False, iterations=50)
+        visualize_packing(simple_rectangle, circles, projection_mode="cartesian", save_path=None)
 
     def test_full_workflow_geographic(self, geographic_polygon):
         """Complete workflow: pack + visualize (geographic)."""
-        circles = pack_polygon(
-            geographic_polygon,
-            n=3,
-            use_projection=True,
-            iterations=50
-        )
-        visualize_packing(
-            geographic_polygon,
-            circles,
-            projection_mode="geographic",
-            save_path=None
-        )
+        circles = pack_polygon(geographic_polygon, n=3, use_projection=True, iterations=50)
+        visualize_packing(geographic_polygon, circles, projection_mode="geographic", save_path=None)
 
     def test_auto_mode_matches_projection_setting(self, simple_rectangle):
         """Auto mode should match the projection used in packing."""

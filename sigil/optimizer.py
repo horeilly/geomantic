@@ -5,7 +5,7 @@ This module contains the PyTorch-based optimization logic that fits circles
 to polygons using gradient descent and soft rasterization.
 """
 
-from typing import Tuple
+from typing import Tuple, Optional, List
 import numpy as np
 import torch
 import torch.nn as nn
@@ -72,7 +72,12 @@ class CircleModel(nn.Module):
         log_radii: Learnable tensor of shape (n_circles,) for log(radius)
     """
 
-    def __init__(self, n_circles: int, init_scale: float = 0.2, target_polygon: Polygon = None):
+    def __init__(
+        self,
+        n_circles: int,
+        init_scale: float = 0.2,
+        target_polygon: Optional[Polygon] = None,
+    ):
         """
         Initialize circle parameters with random values.
 
@@ -107,7 +112,7 @@ class CircleModel(nn.Module):
         from shapely.geometry import Point
 
         min_x, min_y, max_x, max_y = polygon.bounds
-        points = []
+        points: List[List[float]] = []
 
         # Rejection sampling: generate random points until we have enough inside
         max_attempts = n_points * 1000  # Prevent infinite loop
@@ -124,8 +129,9 @@ class CircleModel(nn.Module):
         while len(points) < n_points:
             cx, cy = polygon.centroid.x, polygon.centroid.y
             # Add small jitter
-            points.append([cx + np.random.uniform(-0.05, 0.05),
-                          cy + np.random.uniform(-0.05, 0.05)])
+            points.append(
+                [cx + np.random.uniform(-0.05, 0.05), cy + np.random.uniform(-0.05, 0.05)]
+            )
 
         return torch.tensor(points, dtype=torch.float32)
 
@@ -168,7 +174,7 @@ def optimize_circles(
     learning_rate: float = 0.08,
     start_sharpness: float = 1.0,
     end_sharpness: float = 150.0,
-    device: str = None,
+    device: Optional[str] = None,
     verbose: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -225,12 +231,13 @@ def optimize_circles(
         # Containment penalty: penalize circles whose centers are outside polygon
         containment_penalty = 0.0
         from shapely.geometry import Point
+
         for center in model.centers:
             cx, cy = center[0].item(), center[1].item()
             if not target_polygon.contains(Point(cx, cy)):
                 # Distance to nearest edge (approximated by distance to centroid)
                 poly_cx, poly_cy = target_polygon.centroid.x, target_polygon.centroid.y
-                dist = torch.sqrt((center[0] - poly_cx)**2 + (center[1] - poly_cy)**2)
+                dist = torch.sqrt((center[0] - poly_cx) ** 2 + (center[1] - poly_cy) ** 2)
                 containment_penalty += dist * 0.1  # Weight the penalty
 
         # Repulsion penalty: discourage circles from overlapping too much
@@ -253,9 +260,20 @@ def optimize_circles(
 
         if verbose and i % 200 == 0:
             iou_str = f"{iou_loss.item():.4f}"
-            cont_str = f"{containment_penalty:.4f}" if isinstance(containment_penalty, torch.Tensor) else f"{containment_penalty:.4f}"
-            rep_str = f"{repulsion_penalty.item():.4f}" if isinstance(repulsion_penalty, torch.Tensor) else f"{repulsion_penalty:.4f}"
-            print(f"Iteration {i:04d} | IoU: {iou_str} | Contain: {cont_str} | Repulsion: {rep_str} | Total: {loss.item():.4f}")
+            cont_str = (
+                f"{containment_penalty:.4f}"
+                if isinstance(containment_penalty, torch.Tensor)
+                else f"{containment_penalty:.4f}"
+            )
+            rep_str = (
+                f"{repulsion_penalty.item():.4f}"
+                if isinstance(repulsion_penalty, torch.Tensor)
+                else f"{repulsion_penalty:.4f}"
+            )
+            print(
+                f"Iteration {i:04d} | IoU: {iou_str} | Contain: {cont_str} | "
+                f"Repulsion: {rep_str} | Total: {loss.item():.4f}"
+            )
 
     # Extract optimized parameters
     centers = model.centers.detach().cpu().numpy()
@@ -270,7 +288,7 @@ def estimate_optimal_circles(
     max_circles: int = 10,
     resolution: int = 128,
     iterations: int = 500,
-    device: str = None,
+    device: Optional[str] = None,
 ) -> int:
     """
     Estimate optimal number of circles using elbow method on IoU loss.
@@ -334,6 +352,6 @@ def estimate_optimal_circles(
     elbow_idx = np.where(improvements < threshold)[0]
 
     if len(elbow_idx) > 0:
-        return min_circles + elbow_idx[0]
+        return int(min_circles + elbow_idx[0])
     else:
         return max_circles

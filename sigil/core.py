@@ -135,10 +135,10 @@ def pack_polygon(
 
     # Project back to original coordinate system if needed
     if use_projection:
+        assert projector is not None  # Should always be set when use_projection=True
         centers_gps = np.array([projector.coords_to_gps(cx, cy) for cx, cy in centers_meters])
-        # Convert radii using simple scaling (approximate)
+        # Convert radii to degrees using approximate scaling
         # For more accuracy, could compute radius in degrees at each latitude
-        scale_factor = normalizer.scale / METERS_PER_DEGREE_LAT
         radii_output = radii_meters / METERS_PER_DEGREE_LAT
         centers_output = centers_gps
     else:

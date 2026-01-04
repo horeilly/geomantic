@@ -5,7 +5,7 @@ This module provides tools for converting between WGS84 (lat/lon) coordinates
 and metric projections (UTM) to ensure circles remain circular in physical space.
 """
 
-from typing import Tuple
+from typing import Tuple, Optional
 import numpy as np
 import pyproj
 from shapely.geometry import Polygon
@@ -26,7 +26,7 @@ class MetricProjector:
         project_to_gps: Transformer for UTM -> WGS84
     """
 
-    def __init__(self, polygon: Polygon = None, utm_zone: int = None):
+    def __init__(self, polygon: Optional[Polygon] = None, utm_zone: Optional[int] = None):
         """
         Initialize the projector with automatic or manual UTM zone selection.
 
@@ -79,7 +79,8 @@ class MetricProjector:
         Returns:
             Tuple of (longitude, latitude)
         """
-        return self.project_to_gps(x_meters, y_meters)
+        lon, lat = self.project_to_gps(x_meters, y_meters)
+        return (float(lon), float(lat))
 
 
 class MetricNormalizer:

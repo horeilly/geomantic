@@ -25,10 +25,7 @@ class TestPackPolygonInputParsing:
 
     def test_accepts_geojson_dict(self, simple_rectangle):
         """Should accept GeoJSON-like dictionary."""
-        geojson = {
-            "type": "Polygon",
-            "coordinates": [simple_rectangle]
-        }
+        geojson = {"type": "Polygon", "coordinates": [simple_rectangle]}
         circles = pack_polygon(geojson, n=3, iterations=100)
         assert isinstance(circles, list)
         assert len(circles) == 3
@@ -45,10 +42,9 @@ class TestPackPolygonInputParsing:
 
     def test_rejects_multipolygon(self):
         """Should raise TypeError for MultiPolygon."""
-        multi = MultiPolygon([
-            Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]),
-            Polygon([(2, 2), (3, 2), (3, 3), (2, 3)])
-        ])
+        multi = MultiPolygon(
+            [Polygon([(0, 0), (1, 0), (1, 1), (0, 1)]), Polygon([(2, 2), (3, 2), (3, 3), (2, 3)])]
+        )
         with pytest.raises(TypeError, match="polygon must be"):
             pack_polygon(multi, n=3)
 
@@ -66,23 +62,23 @@ class TestPackPolygonOutputFormat:
         """Each circle dict should have radius, centroid_x, centroid_y."""
         circles = pack_polygon(simple_rectangle, n=3, iterations=100)
         for circle in circles:
-            assert 'radius' in circle
-            assert 'centroid_x' in circle
-            assert 'centroid_y' in circle
+            assert "radius" in circle
+            assert "centroid_x" in circle
+            assert "centroid_y" in circle
 
     def test_values_are_numeric(self, simple_rectangle):
         """All values should be numeric."""
         circles = pack_polygon(simple_rectangle, n=3, iterations=100)
         for circle in circles:
-            assert isinstance(circle['radius'], (int, float))
-            assert isinstance(circle['centroid_x'], (int, float))
-            assert isinstance(circle['centroid_y'], (int, float))
+            assert isinstance(circle["radius"], (int, float))
+            assert isinstance(circle["centroid_x"], (int, float))
+            assert isinstance(circle["centroid_y"], (int, float))
 
     def test_radii_are_positive(self, simple_rectangle):
         """All radii should be positive."""
         circles = pack_polygon(simple_rectangle, n=5, iterations=100)
         for circle in circles:
-            assert circle['radius'] > 0
+            assert circle["radius"] > 0
 
     def test_correct_number_of_circles(self, simple_rectangle):
         """Should return exactly n circles when n is specified."""
@@ -115,25 +111,20 @@ class TestPackPolygonCartesian:
 
     def test_cartesian_mode_explicit(self, simple_rectangle):
         """Should work with use_projection=False."""
-        circles = pack_polygon(
-            simple_rectangle,
-            n=3,
-            use_projection=False,
-            iterations=100
-        )
+        circles = pack_polygon(simple_rectangle, n=3, use_projection=False, iterations=100)
         assert len(circles) == 3
         # Check circles are within polygon bounds
         for circle in circles:
-            assert 0 <= circle['centroid_x'] <= 2
-            assert 0 <= circle['centroid_y'] <= 1
+            assert 0 <= circle["centroid_x"] <= 2
+            assert 0 <= circle["centroid_y"] <= 1
 
     def test_circles_fit_within_bounds(self, simple_rectangle):
         """Circle centers should be approximately within polygon bounds."""
         circles = pack_polygon(simple_rectangle, n=5, iterations=200)
         for circle in circles:
             # Centers should be roughly within bounds (allowing some tolerance)
-            assert -0.5 <= circle['centroid_x'] <= 2.5
-            assert -0.5 <= circle['centroid_y'] <= 1.5
+            assert -0.5 <= circle["centroid_x"] <= 2.5
+            assert -0.5 <= circle["centroid_y"] <= 1.5
 
 
 class TestPackPolygonGeographic:
@@ -141,39 +132,24 @@ class TestPackPolygonGeographic:
 
     def test_geographic_mode(self, geographic_polygon):
         """Should work with use_projection=True for lat/lon coords."""
-        circles = pack_polygon(
-            geographic_polygon,
-            n=3,
-            use_projection=True,
-            iterations=100
-        )
+        circles = pack_polygon(geographic_polygon, n=3, use_projection=True, iterations=100)
         assert len(circles) == 3
 
     def test_geographic_coordinates_in_range(self, geographic_polygon):
         """Geographic coordinates should be in valid lat/lon ranges."""
-        circles = pack_polygon(
-            geographic_polygon,
-            n=4,
-            use_projection=True,
-            iterations=100
-        )
+        circles = pack_polygon(geographic_polygon, n=4, use_projection=True, iterations=100)
         for circle in circles:
             # Longitude should be around -122 (SF)
-            assert -123 < circle['centroid_x'] < -121
+            assert -123 < circle["centroid_x"] < -121
             # Latitude should be around 37 (SF)
-            assert 36 < circle['centroid_y'] < 38
+            assert 36 < circle["centroid_y"] < 38
 
     def test_geographic_radius_is_reasonable(self, geographic_polygon):
         """Radii in geographic mode should be small (degrees)."""
-        circles = pack_polygon(
-            geographic_polygon,
-            n=3,
-            use_projection=True,
-            iterations=100
-        )
+        circles = pack_polygon(geographic_polygon, n=3, use_projection=True, iterations=100)
         for circle in circles:
             # Radius in degrees should be small for small area
-            assert 0 < circle['radius'] < 0.1
+            assert 0 < circle["radius"] < 0.1
 
 
 class TestPackPolygonDeterminism:
@@ -185,14 +161,15 @@ class TestPackPolygonDeterminism:
         # Reset seed
         np.random.seed(random_seed)
         import torch
+
         torch.manual_seed(random_seed)
         circles2 = pack_polygon(simple_rectangle, n=3, iterations=50)
 
         # Results should be very similar (allowing for floating point differences)
         for c1, c2 in zip(circles1, circles2):
-            assert np.isclose(c1['radius'], c2['radius'], rtol=1e-3)
-            assert np.isclose(c1['centroid_x'], c2['centroid_x'], rtol=1e-3)
-            assert np.isclose(c1['centroid_y'], c2['centroid_y'], rtol=1e-3)
+            assert np.isclose(c1["radius"], c2["radius"], rtol=1e-3)
+            assert np.isclose(c1["centroid_x"], c2["centroid_x"], rtol=1e-3)
+            assert np.isclose(c1["centroid_y"], c2["centroid_y"], rtol=1e-3)
 
 
 class TestPackPolygonParameters:
@@ -231,8 +208,8 @@ class TestPackPolygonEdgeCases:
         circles = pack_polygon(unit_square, n=1, iterations=100)
         assert len(circles) == 1
         # Single circle should be roughly centered
-        assert 0.3 < circles[0]['centroid_x'] < 0.7
-        assert 0.3 < circles[0]['centroid_y'] < 0.7
+        assert 0.3 < circles[0]["centroid_x"] < 0.7
+        assert 0.3 < circles[0]["centroid_y"] < 0.7
 
     def test_many_circles(self, simple_rectangle):
         """Should handle larger number of circles."""
