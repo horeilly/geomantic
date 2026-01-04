@@ -77,22 +77,47 @@ PyTorch Optimization (IoU + Containment + Repulsion) →
 Denormalization → [Projection back to WGS84] → Circle Results
 ```
 
-## Goals
+## Project Goals
 
-### Business Goals
-- Demonstrate technical breadth as a Data Science leader, with publicly accessible, well-engineered projects.
-- Build a reusable codebase for geometry/optimization problems.
-- Showcase DevOps workflow, deployment automation, and code quality standards.
+### Problem Statement
+Traditional geometric approximation methods struggle with irregular polygons, especially when physical interpretability matters. Geographic boundaries (ZIP codes, districts, protected areas) often need to be simplified for:
+- **Spatial analysis**: Coverage estimation, service area planning, accessibility modeling
+- **Visualization**: Reducing visual complexity while preserving spatial meaning
+- **Approximation**: Replacing complex polygons with analytically tractable primitives
 
-### User Goals
-- Import and run the package for polygon-to-circle packing.
-- Easily get both numerical results and visuals for use in demos, notebooks, or documentation.
-- Optionally vary key parameters (like number of circles).
+Existing solutions either produce poor approximations (convex hulls, bounding boxes) or lack geographic awareness (treating lat/lon as Cartesian coordinates produces distorted circles).
 
-### Non-Goals
-- No real-time web app for external users (yet).
-- No billing, authentication, or commercial features.
-- No support for highly performant large-scale geospatial datasets.
+### What Sigil Solves
+**1. Physically Accurate Geographic Approximation**
+- Automatically projects WGS84 coordinates to UTM before optimization, ensuring circles remain circular on Earth's surface
+- Handles latitude-dependent longitude scaling for correct distance calculations
+- Eliminates the "stretched ellipse" problem common in naive lat/lon circle fitting
+
+**2. Smart Optimization with Constraints**
+- Uses differentiable rendering with PyTorch for gradient-based optimization (faster convergence than genetic algorithms)
+- Containment penalties keep circles inside polygon boundaries (critical for concave shapes)
+- Repulsion penalties prevent circle collapse, ensuring diverse coverage
+- Auto-detection finds optimal circle count using elbow method on IoU loss
+
+**3. Production-Ready Engineering**
+- Type-safe codebase with full mypy compliance
+- Comprehensive test coverage with pytest
+- Pre-commit hooks for code quality (Black, flake8, mypy)
+- CI/CD pipeline with multi-version Python testing (3.8-3.12)
+- Installable via pip with minimal dependencies
+
+### Use Cases
+- **Urban planning**: Approximate service areas (fire stations, schools) for quick distance calculations
+- **Ecology**: Simplify habitat boundaries for circular buffer analysis
+- **Marketing**: Convert trade areas or ZIP code boundaries to radial coverage zones
+- **Education**: Demonstrate optimization techniques, differentiable rendering, and coordinate projections
+- **Data visualization**: Replace complex polygons with simpler circular representations for cleaner maps
+
+### What Sigil Is NOT
+- **Not a general-purpose polygon simplification tool** (use Shapely's `simplify()` for that)
+- **Not optimized for real-time applications** (optimization takes seconds to minutes depending on complexity)
+- **Not a commercial SaaS product** (open-source library for integration into your own tools)
+- **Not a replacement for precise geometric operations** (approximation introduces error by design)
 
 ## User Stories
 - As a Data Scientist, I want to fit circles to arbitrary polygons, so that I can demonstrate geometric optimization in presentations.
