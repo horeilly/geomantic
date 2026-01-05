@@ -38,7 +38,7 @@ def visualize_packing(
         save_path: Optional path to save figure
 
     Examples:
-        >>> from sigil import pack_polygon, visualize_packing
+        >>> from geomantic import pack_polygon, visualize_packing
         >>> polygon = [(-122.4, 37.8), (-122.3, 37.8), ...]
         >>> circles = pack_polygon(polygon, n=5)
         >>> visualize_packing(polygon, circles)

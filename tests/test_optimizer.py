@@ -1,9 +1,9 @@
-"""Tests for sigil.optimizer module."""
+"""Tests for geomantic.optimizer module."""
 
 import torch
 import numpy as np
 
-from sigil.optimizer import (
+from geomantic.optimizer import (
     CircleModel,
     DifferentiableRenderer,
     optimize_circles,
@@ -125,7 +125,7 @@ class TestOptimizeCircles:
         """Loss should decrease over iterations."""
         # Run optimization and track loss manually
         from shapely.geometry import Polygon
-        from sigil.optimizer import DifferentiableRenderer, CircleModel
+        from geomantic.optimizer import DifferentiableRenderer, CircleModel
         import torch.optim as optim
 
         renderer = DifferentiableRenderer(resolution=64, device=device)
@@ -266,7 +266,7 @@ class TestSharpnessAnnealing:
 
     def test_sharpness_increases_over_time(self):
         """Sharpness should increase from start to end over iterations."""
-        from sigil.constants import START_SHARPNESS, END_SHARPNESS
+        from geomantic.constants import START_SHARPNESS, END_SHARPNESS
 
         iterations = 100
 

@@ -1,8 +1,35 @@
-"""Shared pytest fixtures for sigil tests."""
+"""Shared pytest fixtures for geomantic tests."""
 
 import pytest
 import torch
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+
+@pytest.fixture(scope="session", autouse=True)
+def matplotlib_backend():
+    """Set matplotlib to non-interactive backend for testing.
+
+    This prevents plt.show() from opening GUI windows during tests.
+    The 'Agg' backend renders to memory only.
+    """
+    matplotlib.use("Agg")
+    # Also disable interactive mode
+    plt.ioff()
+    yield
+    # Cleanup after all tests
+    plt.close("all")
+
+
+@pytest.fixture(autouse=True)
+def cleanup_plots():
+    """Close all matplotlib figures after each test.
+
+    Prevents memory leaks from accumulating plot figures.
+    """
+    yield
+    plt.close("all")
 
 
 @pytest.fixture

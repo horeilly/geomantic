@@ -1,9 +1,9 @@
-# Sigil
+# Geomantic
 
-[![Tests](https://github.com/horeilly/sigil/workflows/Tests/badge.svg)](https://github.com/horeilly/sigil/actions)
-[![Coverage](https://codecov.io/gh/horeilly/sigil/branch/main/graph/badge.svg)](https://codecov.io/gh/horeilly/sigil)
-[![PyPI](https://img.shields.io/pypi/v/sigil.svg)](https://pypi.org/project/sigil/)
-[![Python](https://img.shields.io/pypi/pyversions/sigil.svg)](https://pypi.org/project/sigil/)
+[![Tests](https://github.com/horeilly/geomantic/workflows/Tests/badge.svg)](https://github.com/horeilly/geomantic/actions)
+[![Coverage](https://codecov.io/gh/horeilly/geomantic/branch/main/graph/badge.svg)](https://codecov.io/gh/horeilly/geomantic)
+[![PyPI](https://img.shields.io/pypi/v/geomantic.svg)](https://pypi.org/project/geomantic/)
+[![Python](https://img.shields.io/pypi/pyversions/geomantic.svg)](https://pypi.org/project/geomantic/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## TL;DR
@@ -12,13 +12,13 @@ A Python package to approximate an irregular polygon as a set of circles, with o
 ## Installation
 
 ```bash
-pip install sigil
+pip install geomantic
 ```
 
 ## Quick Start
 
 ```python
-from sigil import pack_polygon, visualize_packing
+from geomantic import pack_polygon, visualize_packing
 
 # Define a polygon (list of coordinate tuples)
 polygon = [(0, 0), (2, 0), (2, 1), (0, 1)]
@@ -43,10 +43,10 @@ circles = pack_polygon(
 
 ## Architecture
 
-Sigil uses a modular architecture with four main components:
+Geomantic uses a modular architecture with four main components:
 
 ```
-sigil/
+geomantic/
 ├── core.py          # Main API: pack_polygon() orchestrates the pipeline
 ├── optimizer.py     # PyTorch-based optimization engine
 ├── projection.py    # Geographic coordinate transformations (WGS84 ↔ UTM)
@@ -87,7 +87,7 @@ Traditional geometric approximation methods struggle with irregular polygons, es
 
 Existing solutions either produce poor approximations (convex hulls, bounding boxes) or lack geographic awareness (treating lat/lon as Cartesian coordinates produces distorted circles).
 
-### What Sigil Solves
+### What Geomantic Solves
 **1. Physically Accurate Geographic Approximation**
 - Automatically projects WGS84 coordinates to UTM before optimization, ensuring circles remain circular on Earth's surface
 - Handles latitude-dependent longitude scaling for correct distance calculations
@@ -113,7 +113,7 @@ Existing solutions either produce poor approximations (convex hulls, bounding bo
 - **Education**: Demonstrate optimization techniques, differentiable rendering, and coordinate projections
 - **Data visualization**: Replace complex polygons with simpler circular representations for cleaner maps
 
-### What Sigil Is NOT
+### What Geomantic Is NOT
 - **Not a general-purpose polygon simplification tool** (use Shapely's `simplify()` for that)
 - **Not optimized for real-time applications** (optimization takes seconds to minutes depending on complexity)
 - **Not a commercial SaaS product** (open-source library for integration into your own tools)
@@ -146,7 +146,7 @@ Existing solutions either produce poor approximations (convex hulls, bounding bo
 
 ## User Experience
 - User installs via pip.
-- Imports in notebook/script: from sigil import pack_polygon
+- Imports in notebook/script: from geomantic import pack_polygon
 - Calls main function, passing polygon and options.
 - Receives output (list of circles), optionally calls viz function for output.
 - Views resulting image in notebook or as file.

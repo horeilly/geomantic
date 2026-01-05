@@ -1,4 +1,4 @@
-"""Constants and default parameters for the sigil package."""
+"""Constants and default parameters for the geomantic package."""
 
 # Physical constants
 METERS_PER_DEGREE_LAT = 111320.0

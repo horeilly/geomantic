@@ -1,6 +1,6 @@
 """Quick test to verify the refactored code works."""
 
-from sigil import pack_polygon, print_circle_summary
+from geomantic import pack_polygon, print_circle_summary
 
 # Simple test polygon (triangle)
 polygon = [(0.0, 0.0), (1.0, 0.0), (0.5, 0.866), (0.0, 0.0)]

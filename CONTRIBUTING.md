@@ -7,7 +7,7 @@ Thank you for your interest in contributing to the Sigil project!
 1. Clone the repository:
 ```bash
 git clone https://github.com/yourusername/sigil.git
-cd sigil
+cd geomantic
 ```
 
 2. Create a virtual environment:
@@ -34,29 +34,29 @@ This project uses **Black** for code formatting with a line length of 100 charac
 
 Always format your code with Black:
 ```bash
-black sigil/ tests/ examples/
+black geomantic/ tests/ examples/
 ```
 
 Check that your code is formatted correctly:
 ```bash
-black --check sigil/ tests/ examples/
+black --check geomantic/ tests/ examples/
 ```
 
 ### Additional Quality Checks
 
 **Type checking with mypy:**
 ```bash
-mypy sigil/
+mypy geomantic/
 ```
 
 **Linting with flake8:**
 ```bash
-flake8 sigil/ tests/ examples/
+flake8 geomantic/ tests/ examples/
 ```
 
 **Run tests:**
 ```bash
-pytest tests/ -v --cov=sigil
+pytest tests/ -v --cov=geomantic
 ```
 
 ## Code Standards

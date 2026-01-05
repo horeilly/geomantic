@@ -56,7 +56,7 @@ def pack_polygon(
         TypeError: If polygon format is not recognized
 
     Examples:
-        >>> from sigil import pack_polygon
+        >>> from geomantic import pack_polygon
         >>> polygon = [(-122.4, 37.8), (-122.3, 37.8), (-122.3, 37.7), (-122.4, 37.7)]
         >>> circles = pack_polygon(polygon, n=5)
         >>> print(circles[0])

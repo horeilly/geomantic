@@ -1,1 +1,1 @@
-"""Test suite for sigil package."""
+"""Test suite for geomantic package."""

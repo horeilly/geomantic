@@ -6,7 +6,7 @@ Demonstrates circle packing with common geometric shapes.
 """
 
 import numpy as np
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 
 def main():

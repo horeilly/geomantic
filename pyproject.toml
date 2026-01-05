@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "wheel", "setuptools-scm>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sigil"
+name = "geomantic"
 version = "0.1.0"
 description = "Approximate irregular polygons as sets of circles using differentiable rendering"
 readme = "README.md"
@@ -12,7 +12,7 @@ license = {file = "LICENSE"}
 authors = [
     {name = "Harry O'Reilly", email = "harry@example.com"}
 ]
-keywords = ["geometry", "optimization", "circles", "polygon", "packing", "pytorch"]
+keywords = ["geometry", "optimization", "circles", "polygon", "packing", "pytorch", "geomancy"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -37,9 +37,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/horeilly/sigil"
-Repository = "https://github.com/horeilly/sigil"
-Issues = "https://github.com/horeilly/sigil/issues"
+Homepage = "https://github.com/horeilly/geomantic"
+Repository = "https://github.com/horeilly/geomantic"
+Issues = "https://github.com/horeilly/geomantic/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -52,11 +52,11 @@ dev = [
 ]
 
 [project.scripts]
-sigil-demo = "sigil.demo:main"
+geomantic-demo = "geomantic.demo:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["sigil*"]
+include = ["geomantic*"]
 
 [tool.black]
 line-length = 100
@@ -90,7 +90,10 @@ warn_no_return = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q --strict-markers --cov=sigil --cov-report=term-missing"
+addopts = "-ra -q --strict-markers --cov=geomantic --cov-report=term-missing"
 testpaths = [
     "tests",
+]
+filterwarnings = [
+    "ignore:FigureCanvasAgg is non-interactive:UserWarning",
 ]

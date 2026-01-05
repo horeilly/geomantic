@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Sigil - Circle Packing Demo
+Geomantic - Circle Packing Demo
 
-Simple demonstration of the sigil package with a basic polygon.
+Simple demonstration of the geomantic package with a basic polygon.
 For the San Francisco ZIP code demo, see examples/sf_zipcodes_demo.py
 """
 
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 
 def main() -> None:

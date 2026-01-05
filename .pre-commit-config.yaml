@@ -25,7 +25,7 @@ repos:
         additional_dependencies:
           - types-requests
         args: [--ignore-missing-imports]
-        files: ^sigil/
+        files: ^geomantic/
 
   # Additional useful hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks

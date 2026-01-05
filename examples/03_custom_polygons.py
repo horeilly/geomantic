@@ -6,7 +6,7 @@ Demonstrates circle packing with irregular and complex shapes.
 """
 
 import numpy as np
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 
 def create_star(n_points=5, outer_radius=1.0, inner_radius=0.4):

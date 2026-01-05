@@ -7,7 +7,7 @@ Benchmarks circle packing performance across different polygon complexities.
 
 import time
 import numpy as np
-from sigil import pack_polygon
+from geomantic import pack_polygon
 
 
 def create_test_polygons():

@@ -1,1 +1,1 @@
-"""Test fixtures for sigil tests."""
+"""Test fixtures for geomantic tests."""

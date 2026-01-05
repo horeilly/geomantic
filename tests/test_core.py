@@ -1,10 +1,10 @@
-"""Tests for sigil.core module (main API)."""
+"""Tests for geomantic.core module (main API)."""
 
 import pytest
 import numpy as np
 from shapely.geometry import Polygon, MultiPolygon
 
-from sigil import pack_polygon
+from geomantic import pack_polygon
 
 
 class TestPackPolygonInputParsing:

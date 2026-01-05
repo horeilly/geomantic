@@ -1,7 +1,7 @@
 """
 San Francisco ZIP Code Circle Packing Demo
 
-This script demonstrates the sigil package by fitting circles
+This script demonstrates the geomantic package by fitting circles
 to San Francisco ZIP code boundaries.
 """
 
@@ -10,8 +10,8 @@ import json
 import requests
 from shapely.geometry import shape
 
-# Import the sigil package
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+# Import the geomantic package
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 
 class SFZipCodeLoader:

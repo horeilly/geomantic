@@ -137,5 +137,5 @@ pip install -e .
 Or install from PyPI:
 
 ```bash
-pip install sigil
+pip install geomantic
 ```

@@ -1,10 +1,10 @@
-"""Tests for sigil.projection module."""
+"""Tests for geomantic.projection module."""
 
 import pytest
 import numpy as np
 from shapely.geometry import Polygon
 
-from sigil.projection import MetricProjector, MetricNormalizer
+from geomantic.projection import MetricProjector, MetricNormalizer
 
 
 class TestMetricProjector:

@@ -1,9 +1,9 @@
-"""Tests for sigil.visualization module."""
+"""Tests for geomantic.visualization module."""
 
 import os
 import tempfile
 
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 
 class TestPrintCircleSummary:

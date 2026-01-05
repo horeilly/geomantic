@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Python package for sigil optimization that uses differentiable rendering and PyTorch to approximate irregular polygons as sets of circles. The package provides a clean API for working with any polygon and includes specialized support for geographic data (e.g., ZIP code boundaries) using proper metric projections.
+This is a Python package called **Geomantic** (from the Geomancer job class in Final Fantasy) that uses differentiable rendering and PyTorch to approximate irregular polygons as sets of circles. The package provides a clean API for working with any polygon and includes specialized support for geographic data (e.g., ZIP code boundaries) using proper metric projections.
 
 ## Installation and Running
 
@@ -20,8 +20,8 @@ pip install -r requirements-dev.txt
 
 **Run the demo:**
 ```bash
-sigil-demo
-# or: python -m sigil.demo
+geomantic-demo
+# or: python -m geomantic.demo
 ```
 
 **Run examples:**
@@ -41,25 +41,25 @@ pytest tests/ -v
 **Code formatting with Black:**
 ```bash
 # Format all code
-black sigil/ tests/ examples/
+black geomantic/ tests/ examples/
 
 # Check formatting without changes
-black --check sigil/ tests/ examples/
+black --check geomantic/ tests/ examples/
 ```
 
 **Linting with flake8:**
 ```bash
-flake8 sigil/ tests/ examples/
+flake8 geomantic/ tests/ examples/
 ```
 
 **Type checking with mypy:**
 ```bash
-mypy sigil/
+mypy geomantic/
 ```
 
 **Run tests with coverage:**
 ```bash
-pytest tests/ -v --cov=sigil --cov-report=term-missing
+pytest tests/ -v --cov=geomantic --cov-report=term-missing
 ```
 
 Black configuration is in `pyproject.toml` with line length set to 100.
@@ -67,7 +67,7 @@ Black configuration is in `pyproject.toml` with line length set to 100.
 ## Package Structure
 
 ```
-sigil/
+geomantic/
 ├── __init__.py          # Package entry point, exports main API
 ├── constants.py         # Magic numbers and configuration constants
 ├── core.py              # Main API: pack_polygon() function
@@ -94,7 +94,7 @@ examples/
 ## Main API Usage
 
 ```python
-from sigil import pack_polygon, visualize_packing, print_circle_summary
+from geomantic import pack_polygon, visualize_packing, print_circle_summary
 
 # Define a polygon (list of tuples, Polygon object, or GeoJSON dict)
 polygon = [(0, 0), (2, 0), (2, 1), (0, 1), (0, 0)]
@@ -130,23 +130,23 @@ For Cartesian data (`use_projection=False`), steps 2 and 5 are skipped.
 
 ### Key Modules
 
-**`sigil/core.py`**: Main API
+**`geomantic/core.py`**: Main API
 - `pack_polygon()`: Primary function that orchestrates the entire pipeline. Handles input parsing, projection setup, normalization, optimization, and result formatting.
 - Supports auto-detection of optimal circle count using elbow method
 - Validates input and handles MultiPolygon geometries
 
-**`sigil/projection.py`**: Coordinate transformations
+**`geomantic/projection.py`**: Coordinate transformations
 - `MetricProjector`: Bidirectional WGS84 ↔ UTM transformation with auto-detection of UTM zone from polygon centroid
 - `MetricNormalizer`: Scales metric coordinates to [0,1] normalized space and back
 - Critical for ensuring circles remain physically circular on Earth's surface
 
-**`sigil/optimizer.py`**: Optimization engine
+**`geomantic/optimizer.py`**: Optimization engine
 - `DifferentiableRenderer`: Creates spatial grid and rasterizes polygons to binary masks
 - `CircleModel`: PyTorch neural network with learnable circle centers and log-radii
 - `optimize_circles()`: Main optimization loop using Adam optimizer with IoU loss
 - `estimate_optimal_circles()`: Auto-detection using elbow method on loss curve
 
-**`sigil/visualization.py`**: Visualization utilities
+**`geomantic/visualization.py`**: Visualization utilities
 - `visualize_packing()`: Creates plots with automatic projection mode detection
 - `print_circle_summary()`: Formatted text output of results
 - Handles geographic ellipse rendering for lat/lon coordinates

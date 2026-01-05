@@ -5,7 +5,7 @@ Optimization Parameters Example
 Demonstrates the effect of varying optimization parameters.
 """
 
-from sigil import pack_polygon, visualize_packing
+from geomantic import pack_polygon, visualize_packing
 
 
 def main():
