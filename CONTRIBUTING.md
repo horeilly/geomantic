@@ -1,12 +1,12 @@
-# Contributing to Sigil
+# Contributing to Geomantic
 
-Thank you for your interest in contributing to the Sigil project!
+Thank you for your interest in contributing to the Geomantic project!
 
 ## Development Setup
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/sigil.git
+git clone https://github.com/horeilly/geomantic.git
 cd geomantic
 ```
 

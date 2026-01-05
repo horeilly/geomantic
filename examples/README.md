@@ -1,6 +1,6 @@
-# Sigil Examples Gallery
+# Geomantic Examples Gallery
 
-This directory contains example scripts demonstrating various uses of the Sigil circle packing library.
+This directory contains example scripts demonstrating various uses of the Geomantic circle packing library.
 
 ## Running Examples
 
@@ -102,7 +102,7 @@ Sample outputs:
 ## Creating Your Own Examples
 
 ```python
-from sigil import pack_polygon, visualize_packing
+from geomantic import pack_polygon, visualize_packing
 
 # Define your polygon
 my_polygon = [(x1, y1), (x2, y2), ..., (xn, yn)]
@@ -128,7 +128,7 @@ visualize_packing(geo_polygon, circles, projection_mode="geographic")
 
 ## Requirements
 
-All examples require the Sigil package to be installed:
+All examples require the Geomantic package to be installed:
 
 ```bash
 pip install -e .

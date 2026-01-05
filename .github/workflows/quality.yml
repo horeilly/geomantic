@@ -25,13 +25,13 @@ jobs:
 
       - name: Check code formatting with Black
         run: |
-          black --check sigil/ tests/ examples/
+          black --check geomantic/ tests/ examples/
 
       - name: Lint with flake8
         run: |
-          flake8 sigil/ tests/ examples/ --max-line-length=100 --extend-ignore=E203,W503
+          flake8 geomantic/ tests/ examples/ --max-line-length=100 --extend-ignore=E203,W503
 
       - name: Type check with mypy
         run: |
-          mypy sigil/ --ignore-missing-imports
+          mypy geomantic/ --ignore-missing-imports
         continue-on-error: true  # Don't fail CI on mypy errors for now

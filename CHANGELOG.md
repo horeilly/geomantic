@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Migrated from setup.py to modern pyproject.toml (PEP 621)
-- Moved demo script from main.py to sigil.demo module
+- Moved demo script from main.py to geomantic.demo module
 - Updated `CircleModel` to accept `target_polygon` parameter for polygon-aware initialization
 - Combined loss function now includes IoU + containment + repulsion penalties
 

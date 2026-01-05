@@ -1,5 +1,5 @@
 """
-Sigil - Circle Packing Package
+Geomantic - Circle Packing Package
 
 A Python package to approximate irregular polygons as sets of circles using
 differentiable rendering and gradient-based optimization.

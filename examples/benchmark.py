@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Performance Benchmark for Sigil
+Performance Benchmark for Geomantic
 
 Benchmarks circle packing performance across different polygon complexities.
 """
@@ -81,7 +81,7 @@ def benchmark_auto_detection(polygon, resolution):
 def main():
     """Run comprehensive performance benchmarks."""
     print("=" * 80)
-    print("  SIGIL PERFORMANCE BENCHMARK")
+    print("  GEOMANTIC PERFORMANCE BENCHMARK")
     print("=" * 80)
 
     polygons = create_test_polygons()

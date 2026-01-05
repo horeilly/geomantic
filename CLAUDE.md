@@ -71,7 +71,7 @@ geomantic/
 ├── __init__.py          # Package entry point, exports main API
 ├── constants.py         # Magic numbers and configuration constants
 ├── core.py              # Main API: pack_polygon() function
-├── demo.py              # CLI demo script (entry point: sigil-demo)
+├── demo.py              # CLI demo script (entry point: geomantic-demo)
 ├── optimizer.py         # DifferentiableRenderer, CircleModel, optimization logic
 ├── projection.py        # MetricProjector and MetricNormalizer classes
 └── visualization.py     # visualize_packing() and print_circle_summary()
@@ -265,7 +265,7 @@ Comprehensive pytest test suite with 89 tests across 4 modules:
 **Package & Distribution:**
 - ✅ Modern packaging with pyproject.toml (PEP 621)
 - ✅ Proper dependency management
-- ✅ CLI entry point (`sigil-demo`)
+- ✅ CLI entry point (`geomantic-demo`)
 - ✅ MIT License
 - ✅ Ready for PyPI publication
 
